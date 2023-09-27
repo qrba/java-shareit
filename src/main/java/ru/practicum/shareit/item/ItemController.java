@@ -11,11 +11,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemDto;
+import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.item.model.ItemMapper.dtoToItem;
+import static ru.practicum.shareit.item.model.ItemMapper.itemToDto;
 
 @RestController
 @RequestMapping("/items")
@@ -25,32 +31,40 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable int itemId) {
-        return itemService.getItemById(itemId);
+        Item item = itemService.getItemById(itemId);
+        return itemToDto(item);
     }
 
     @GetMapping
     public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") int userId) {
-        return itemService.getItemsByUserId(userId);
+        return itemService.getItemsByUserId(userId).stream()
+                .map(ItemMapper::itemToDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") int userId, @RequestBody @Valid ItemDto itemDto) {
-        return itemService.addItem(userId, itemDto);
+        Item item = dtoToItem(userId, itemDto);
+        return itemToDto(itemService.addItem(item));
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") int userId,
                            @PathVariable int itemId, @RequestBody ItemDto itemDto) {
-        return itemService.updateItem(userId, itemId, itemDto);
+        Item item = dtoToItem(userId, itemDto);
+        item.setId(itemId);
+        return itemToDto(itemService.updateItem(item));
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@PathVariable int itemId) {
-        itemService.deleteItem(itemId);
+    public void deleteItem(@RequestHeader("X-Sharer-User-Id") int userId, @PathVariable int itemId) {
+        itemService.deleteItem(userId, itemId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> findItems(@RequestParam String text) {
-        return itemService.findItems(text);
+        return itemService.findItems(text).stream()
+                .map(ItemMapper::itemToDto)
+                .collect(Collectors.toList());
     }
 }

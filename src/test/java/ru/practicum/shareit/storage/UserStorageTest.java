@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.exception.UserAlreadyExistsException;
-import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.user.model.UserDto;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -23,31 +23,29 @@ public class UserStorageTest {
 
     @Test
     void shouldAddUserAndGetUserById() {
-        UserDto userDto = new UserDto(1, "Test username", "test@email.com");
-        userStorage.addUser(userDto);
-        UserDto userDtoById = userStorage.getUserById(1);
+        User user = User.builder()
+                .id(1)
+                .name("Test username")
+                .email("test@email.com")
+                .build();
+        userStorage.addUser(user);
+        User userById = userStorage.getUserById(1);
 
-        assertEquals(userDto, userDtoById);
-    }
-
-    @Test
-    void shouldNotGetUserByIdWhenIncorrectId() {
-        UserNotFoundException e = assertThrows(
-                UserNotFoundException.class,
-                () -> userStorage.getUserById(10)
-        );
-
-        assertEquals("Пользователь с id=10 не найден", e.getMessage());
+        assertEquals(user, userById);
     }
 
     @Test
     void shouldGetUsers() {
-        UserDto userDto = new UserDto(1, "Test username", "test@email.com");
-        userStorage.addUser(userDto);
-        List<UserDto> users = userStorage.getUsers();
+        User user = User.builder()
+                .id(1)
+                .name("Test username")
+                .email("test@email.com")
+                .build();
+        userStorage.addUser(user);
+        List<User> users = userStorage.getUsers();
 
         assertEquals(1, users.size());
-        assertEquals(userDto, users.get(0));
+        assertEquals(user, users.get(0));
     }
 
     @Test
@@ -55,10 +53,18 @@ public class UserStorageTest {
          UserAlreadyExistsException e = assertThrows(
                 UserAlreadyExistsException.class,
                 () -> {
-                    UserDto userDto = new UserDto(1, "Test username", "test@email.com");
-                    userStorage.addUser(userDto);
-                    UserDto newUserDto = new UserDto(1, "New test username", "test@email.com");
-                    userStorage.addUser(newUserDto);
+                    User user = User.builder()
+                            .id(1)
+                            .name("Test username")
+                            .email("test@email.com")
+                            .build();
+                    userStorage.addUser(user);
+                    User newUser = User.builder()
+                            .id(1)
+                            .name("New test username")
+                            .email("test@email.com")
+                            .build();
+                    userStorage.addUser(newUser);
                 }
         );
 
@@ -67,40 +73,33 @@ public class UserStorageTest {
 
     @Test
     void shouldUpdateUser() {
-        UserDto userDto = new UserDto(1, "Test username", "test@email.com");
-        userStorage.addUser(userDto);
-        UserDto userDtoToUpdate = new UserDto(1, "Updated test username", "test@email.com");
-        userStorage.updateUser(1, userDtoToUpdate);
-        UserDto updatedUserDto = userStorage.getUserById(1);
+        User user = User.builder()
+                .id(1)
+                .name("Test username")
+                .email("test@email.com")
+                .build();
+        userStorage.addUser(user);
+        User userToUpdate = User.builder()
+                .id(1)
+                .name("Updated test username")
+                .email("test@email.com")
+                .build();
+        userStorage.updateUser(userToUpdate);
+        User updatedUser = userStorage.getUserById(1);
 
-        assertEquals(userDtoToUpdate, updatedUserDto);
-    }
-
-    @Test
-    void shouldNotUpdateUserWhenIncorrectId() {
-        UserNotFoundException e = assertThrows(
-                UserNotFoundException.class,
-                () -> {
-                    UserDto userDtoToUpdate = new UserDto(1, "Updated test username", "test@email.com");
-                    userStorage.updateUser(1, userDtoToUpdate);
-                }
-        );
-
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertEquals(userToUpdate, updatedUser);
     }
 
     @Test
     void shouldDeleteUser() {
-        UserNotFoundException e = assertThrows(
-                UserNotFoundException.class,
-                () -> {
-                    UserDto userDto = new UserDto(1, "Test username", "test@email.com");
-                    userStorage.addUser(userDto);
-                    userStorage.deleteUser(1);
-                    userStorage.getUserById(1);
-                }
-        );
+        User user = User.builder()
+                .id(1)
+                .name("Test username")
+                .email("test@email.com")
+                .build();
+        userStorage.addUser(user);
+        userStorage.deleteUser(1);
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertNull(userStorage.getUserById(1));
     }
 }
