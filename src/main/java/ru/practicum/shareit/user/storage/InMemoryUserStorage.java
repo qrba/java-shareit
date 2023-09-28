@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        checkForAnEmail(user.getEmail());
         user.setId(idCounter);
         idCounter++;
         users.put(user.getId(), user);
@@ -36,18 +34,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        User oldUser = users.get(user.getId());
-        String emailUpdate = user.getEmail();
-        String nameUpdate = user.getName();
-        if (emailUpdate != null && !emailUpdate.isBlank() && !emailUpdate.contentEquals(oldUser.getEmail())) {
-            checkForAnEmail(emailUpdate);
-            oldUser.setEmail(emailUpdate);
-        }
-        String name = nameUpdate != null
-                && !nameUpdate.isBlank()
-                ? nameUpdate : oldUser.getName();
-        oldUser.setName(name);
-        return oldUser;
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override
@@ -55,11 +43,11 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(userId);
     }
 
-    private void checkForAnEmail(String email) {
-        if (users.values().stream()
+    @Override
+    public Boolean checkForAnEmail(String email) {
+        return users.values().stream()
                 .anyMatch(
                         user -> user.getEmail().equals(email)
-                )
-        ) throw new UserAlreadyExistsException("Пользователь с email '" + email + "' уже существует");
+                );
     }
 }

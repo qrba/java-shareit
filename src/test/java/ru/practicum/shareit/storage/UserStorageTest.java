@@ -5,15 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.practicum.shareit.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest
@@ -49,29 +49,6 @@ public class UserStorageTest {
     }
 
     @Test
-    void shouldNotAddUserWhenEmailExists() {
-         UserAlreadyExistsException e = assertThrows(
-                UserAlreadyExistsException.class,
-                () -> {
-                    User user = User.builder()
-                            .id(1)
-                            .name("Test username")
-                            .email("test@email.com")
-                            .build();
-                    userStorage.addUser(user);
-                    User newUser = User.builder()
-                            .id(1)
-                            .name("New test username")
-                            .email("test@email.com")
-                            .build();
-                    userStorage.addUser(newUser);
-                }
-        );
-
-        assertEquals("Пользователь с email 'test@email.com' уже существует", e.getMessage());
-    }
-
-    @Test
     void shouldUpdateUser() {
         User user = User.builder()
                 .id(1)
@@ -101,5 +78,18 @@ public class UserStorageTest {
         userStorage.deleteUser(1);
 
         assertNull(userStorage.getUserById(1));
+    }
+
+    @Test
+    void shouldCheckForAnEmail() {
+        User user = User.builder()
+                .id(1)
+                .name("Test username")
+                .email("test@email.com")
+                .build();
+        userStorage.addUser(user);
+
+        assertTrue(userStorage.checkForAnEmail("test@email.com"));
+        assertFalse(userStorage.checkForAnEmail("anothertest@email.com"));
     }
 }

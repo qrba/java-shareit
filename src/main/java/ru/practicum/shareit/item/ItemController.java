@@ -11,17 +11,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemDto;
-import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.item.model.ItemMapper.dtoToItem;
-import static ru.practicum.shareit.item.model.ItemMapper.itemToDto;
 
 @RestController
 @RequestMapping("/items")
@@ -31,29 +25,23 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable int itemId) {
-        Item item = itemService.getItemById(itemId);
-        return itemToDto(item);
+        return itemService.getItemById(itemId);
     }
 
     @GetMapping
     public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") int userId) {
-        return itemService.getItemsByUserId(userId).stream()
-                .map(ItemMapper::itemToDto)
-                .collect(Collectors.toList());
+        return itemService.getItemsByUserId(userId);
     }
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") int userId, @RequestBody @Valid ItemDto itemDto) {
-        Item item = dtoToItem(userId, itemDto);
-        return itemToDto(itemService.addItem(item));
+        return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") int userId,
                            @PathVariable int itemId, @RequestBody ItemDto itemDto) {
-        Item item = dtoToItem(userId, itemDto);
-        item.setId(itemId);
-        return itemToDto(itemService.updateItem(item));
+        return itemService.updateItem(userId, itemId, itemDto);
     }
 
     @DeleteMapping("/{itemId}")
@@ -63,8 +51,6 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> findItems(@RequestParam String text) {
-        return itemService.findItems(text).stream()
-                .map(ItemMapper::itemToDto)
-                .collect(Collectors.toList());
+        return itemService.findItems(text);
     }
 }
