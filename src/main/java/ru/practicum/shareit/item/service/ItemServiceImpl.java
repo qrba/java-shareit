@@ -56,8 +56,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(int userId, int itemId, ItemDto itemDto) {
+    public ItemDto updateItem(int userId, ItemDto itemDto) {
         userStorage.getUserById(userId);
+        int itemId = itemDto.getId();
         Item oldItem = itemStorage.getItemById(itemId);
         if (oldItem == null) throw new ItemNotFoundException("Вещь с id=" + itemId + " не найдена");
         if (oldItem.getOwner() != userId)

@@ -11,7 +11,7 @@ public interface UserService {
 
     UserDto addUser(UserDto userDto);
 
-    UserDto updateUser(int userId, UserDto userDto);
+    UserDto updateUser(UserDto userDto);
 
     void deleteUser(int userId);
 }

@@ -51,7 +51,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(int userId, UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
+        int userId = userDto.getId();
         User oldUser = userStorage.getUserById(userId);
         if (oldUser == null) throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
         User user = dtoToUser(userDto);
