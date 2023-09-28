@@ -64,6 +64,13 @@ public class ItemServiceImpl implements ItemService {
             throw new WrongItemOwnerException("Пользователь с id=" + userId + " не владеет вещью с id=" + itemId);
         Item item = dtoToItem(userId, itemDto);
         item.setId(itemId);
+
+        String name = item.getName();
+        String description = item.getDescription();
+        if (name == null || name.isBlank()) item.setName(oldItem.getName());
+        if (description == null || description.isBlank()) item.setDescription(oldItem.getDescription());
+        if (item.getIsAvailable() == null) item.setIsAvailable(oldItem.getIsAvailable());
+
         Item updatedItem = itemStorage.updateItem(item);
         log.info("Обновлена вещь {}", updatedItem);
         return itemToDto(updatedItem);
