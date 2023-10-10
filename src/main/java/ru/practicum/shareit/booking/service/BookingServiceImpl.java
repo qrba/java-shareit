@@ -75,8 +75,7 @@ public class BookingServiceImpl implements BookingService {
         if (approved) {
             booking.setStatus(BookingStatus.APPROVED);
             log.info("Пользователь с id={} подтвердил бронирование с id={}", userId, bookingId);
-        }
-        else {
+        } else {
             booking.setStatus(BookingStatus.REJECTED);
             log.info("Пользователь с id={} отклонил бронирование с id={}", userId, bookingId);
         }
