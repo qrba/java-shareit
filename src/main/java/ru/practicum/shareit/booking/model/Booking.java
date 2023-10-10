@@ -1,40 +1,40 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.booking.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
-@Builder
 @Data
 @Entity
+@Table(name = "bookings")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "items")
-public class Item {
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length = 128)
-    private String name;
-    @Column(length = 1000)
-    private String description;
-    @Column(name = "is_available")
-    private Boolean isAvailable;
+    @Column(name = "start_time")
+    private LocalDateTime start;
+    @Column(name = "end_time")
+    private LocalDateTime end;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner")
-    private User owner;
-    @Column(name = "request_id")
-    private Integer requestId;
+    private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User booker;
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 }
