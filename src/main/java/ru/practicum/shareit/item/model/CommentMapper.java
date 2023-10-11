@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.model;
 
+import ru.practicum.shareit.item.model.dto.CommentDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;

@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingDtoDefault;
-import ru.practicum.shareit.booking.model.BookingDtoOutgoing;
+import ru.practicum.shareit.booking.model.dto.BookingDtoDefault;
+import ru.practicum.shareit.booking.model.dto.BookingDtoOutgoing;
 import ru.practicum.shareit.booking.model.BookingMapper;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -63,13 +63,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOutgoing approveBooking(int userId, int bookingId, boolean approved) {
-        Optional<Booking> bookingOptional = bookingStorage.findById(bookingId);
+        Optional<Booking> bookingOptional = bookingStorage.findByIdAndItemOwnerId(bookingId, userId);
         if (bookingOptional.isEmpty())
             throw new BookingNotFoundException("Бронирование с id=" + bookingId + " не найдено");
         Booking booking = bookingOptional.get();
-        if (booking.getItem().getOwner().getId() != userId) throw new BookingNotFoundException(
-                    "У пользователя с id=" + userId + " не обнаружено бронирований с id=" + bookingId
-            );
         if (!booking.getStatus().equals(BookingStatus.WAITING))
             throw new BookingStatusException("Статус бронирования не является 'WAITING'");
         if (approved) {
@@ -85,11 +82,12 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public BookingDtoOutgoing getById(int userId, int bookingId) {
+        if (!userStorage.existsById(userId))
+            throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
         Optional<Booking> bookingOptional = bookingStorage.findById(bookingId);
         if (bookingOptional.isEmpty())
             throw new BookingNotFoundException("Бронирование с id=" + bookingId + " не найдено");
         Booking booking = bookingOptional.get();
-
         if (booking.getItem().getOwner().getId() != userId && booking.getBooker().getId() != userId)
             throw new BookingNotFoundException(
                     "У пользователя с id=" + userId + " не обнаружено бронирований с id=" + bookingId

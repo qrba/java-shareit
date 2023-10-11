@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.booking.model.BookingDtoDefault;
-import ru.practicum.shareit.booking.model.BookingDtoOutgoing;
+import ru.practicum.shareit.booking.model.dto.BookingDtoDefault;
+import ru.practicum.shareit.booking.model.dto.BookingDtoOutgoing;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 

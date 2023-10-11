@@ -12,9 +12,9 @@ import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.ItemOwnerException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.CommentDto;
+import ru.practicum.shareit.item.model.dto.CommentDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.model.ItemDto;
+import ru.practicum.shareit.item.model.dto.ItemDto;
 import ru.practicum.shareit.item.storage.CommentStorage;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.model.User;
@@ -61,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
                     now
             );
         }
-        List<CommentDto> comments = commentStorage.findByItemId(itemId).stream()
+        List<CommentDto> comments = commentStorage.findByItemIdOrderByCreatedDesc(itemId).stream()
                 .map(comment -> commentToDto(comment, comment.getAuthor().getName()))
                 .collect(Collectors.toList());
         log.info("Запрошена вещь {}", item);
@@ -89,7 +89,7 @@ public class ItemServiceImpl implements ItemService {
                                     BookingStatus.REJECTED,
                                     now
                             ),
-                            commentStorage.findByItemId(item.getId()).stream()
+                            commentStorage.findByItemIdOrderByCreatedDesc(item.getId()).stream()
                                     .map(comment -> commentToDto(comment, comment.getAuthor().getName()))
                                     .collect(Collectors.toList())
                     );

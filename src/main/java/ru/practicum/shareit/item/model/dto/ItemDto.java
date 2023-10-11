@@ -1,9 +1,9 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.booking.model.BookingDtoDefault;
+import ru.practicum.shareit.booking.model.dto.BookingDtoDefault;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

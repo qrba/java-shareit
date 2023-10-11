@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
+import ru.practicum.shareit.booking.model.dto.BookingDtoDefault;
+import ru.practicum.shareit.booking.model.dto.BookingDtoOutgoing;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 

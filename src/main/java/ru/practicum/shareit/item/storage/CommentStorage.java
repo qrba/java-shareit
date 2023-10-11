@@ -6,5 +6,5 @@ import ru.practicum.shareit.item.model.Comment;
 import java.util.List;
 
 public interface CommentStorage extends JpaRepository<Comment, Integer> {
-    List<Comment> findByItemId(int itemId);
+    List<Comment> findByItemIdOrderByCreatedDesc(int itemId);
 }
