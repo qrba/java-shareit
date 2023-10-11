@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
@@ -15,26 +14,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
-@Builder
 @Data
 @Entity
+@Table(name = "comments")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "items")
-public class Item {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length = 128)
-    private String name;
     @Column(length = 1000)
-    private String description;
-    @Column(name = "is_available")
-    private Boolean isAvailable;
+    private String text;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner")
-    private User owner;
-    @Column(name = "request_id")
-    private Integer requestId;
+    @JoinColumn(name = "item_id")
+    private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
+    private LocalDateTime created;
 }

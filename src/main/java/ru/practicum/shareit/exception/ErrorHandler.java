@@ -21,8 +21,15 @@ public class ErrorHandler {
         return new ErrorResponse(error);
     }
 
-    @ExceptionHandler({UserNotFoundException.class,
-            ItemNotFoundException.class})
+    @ExceptionHandler({ItemUnavailableException.class, BookingEndTimeException.class,
+            BookingStateException.class, BookingStatusException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequest(RuntimeException e) {
+        log.error(e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(RuntimeException e) {
         log.error(e.getMessage());
@@ -36,13 +43,12 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({WrongItemOwnerException.class})
+    @ExceptionHandler({ItemOwnerException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleWrongItemOwnerException(RuntimeException e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
-
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
