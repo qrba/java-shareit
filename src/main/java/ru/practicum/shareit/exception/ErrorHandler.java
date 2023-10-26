@@ -22,14 +22,15 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({ItemUnavailableException.class, BookingEndTimeException.class,
-            BookingStateException.class, BookingStatusException.class})
+            BookingStateException.class, BookingStatusException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(RuntimeException e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class,
+            BookingNotFoundException.class, ItemRequestNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(RuntimeException e) {
         log.error(e.getMessage());

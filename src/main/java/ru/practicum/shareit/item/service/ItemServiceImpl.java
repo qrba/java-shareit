@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -10,6 +12,7 @@ import ru.practicum.shareit.booking.storage.BookingStorage;
 import ru.practicum.shareit.exception.BookingEndTimeException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.ItemOwnerException;
+import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.dto.CommentDto;
@@ -17,6 +20,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.dto.ItemDto;
 import ru.practicum.shareit.item.storage.CommentStorage;
 import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.storage.ItemRequestStorage;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -39,6 +44,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserStorage userStorage;
     private final BookingStorage bookingStorage;
     private final CommentStorage commentStorage;
+    private final ItemRequestStorage itemRequestStorage;
 
     @Override
     @Transactional(readOnly = true)
@@ -70,11 +76,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> getItemsByUserId(int userId) {
+    public List<ItemDto> getItemsByUserId(int userId, int from, int size) {
         if (!userStorage.existsById(userId))
             throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
         log.info("Запрошен список вещей пользователя с id={}", userId);
-        return itemStorage.findByOwnerId(userId).stream()
+        return itemStorage.findByOwnerId(userId, getPageable(from, size)).stream()
                 .map(item -> {
                     LocalDateTime now = LocalDateTime.now();
                     return itemToDto(
@@ -102,8 +108,18 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(int userId, ItemDto itemDto) {
         Optional<User> userOptional = userStorage.findById(userId);
         if (userOptional.isEmpty()) throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
+
+        ItemRequest itemRequest = null;
+        Integer requestId = itemDto.getRequestId();
+        if (requestId != null) {
+            Optional<ItemRequest> itemRequestOptional = itemRequestStorage.findById(requestId);
+            if (itemRequestOptional.isEmpty())
+                throw new ItemRequestNotFoundException("Запрос с id=" + requestId + " не найден");
+            itemRequest = itemRequestOptional.get();
+        }
+
         Item item = itemStorage.save(
-                itemFromDto(itemDto, userOptional.get())
+                itemFromDto(itemDto, userOptional.get(), itemRequest)
         );
         log.info("Добавлена вещь {}", item);
         return itemToDto(item, null, null, null);
@@ -118,7 +134,16 @@ public class ItemServiceImpl implements ItemService {
         User owner = oldItem.getOwner();
         if (owner.getId() != userId)
             throw new ItemOwnerException("Пользователь с id=" + userId + " не владеет вещью с id=" + itemId);
-        Item updateItem = itemFromDto(itemDto, owner);
+
+        ItemRequest itemRequest = null;
+        Integer requestId = itemDto.getRequestId();
+        if (requestId != null) {
+            Optional<ItemRequest> itemRequestOptional = itemRequestStorage.findById(requestId);
+            if (itemRequestOptional.isEmpty())
+                throw new ItemRequestNotFoundException("Запрос с id=" + requestId + " не найден");
+            itemRequest = itemRequestOptional.get();
+        }
+        Item updateItem = itemFromDto(itemDto, owner, itemRequest);
 
         String name = updateItem.getName();
         String description = updateItem.getDescription();
@@ -141,10 +166,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> findItems(String text) {
+    public List<ItemDto> findItems(String text, int from, int size) {
         if (text.isBlank()) return Collections.emptyList();
         log.info("Запрошен поиск по тексту '{}'", text);
-        return itemStorage.findByText(text).stream()
+        return itemStorage.findByText(text, getPageable(from, size)).stream()
                 .map(item -> itemToDto(item, null, null, null))
                 .collect(Collectors.toList());
     }
@@ -162,5 +187,12 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = commentStorage.save(commentFromDto(commentDto, item, author));
         log.info("Добавлен комментарий '{}'", comment);
         return commentToDto(comment, author.getName());
+    }
+
+    private Pageable getPageable(int from, int size) {
+        if (size < 1) throw new IllegalArgumentException("Количество элементов для отображения не может быть меньше 1");
+        if (from < 0) throw new IllegalArgumentException("Индекс первого элемента не может быть меньше 0");
+        int page = from / size;
+        return PageRequest.of(page, size);
     }
 }
