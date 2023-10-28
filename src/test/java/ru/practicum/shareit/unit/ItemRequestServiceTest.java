@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -68,9 +67,9 @@ public class ItemRequestServiceTest {
 
         ItemRequestDto itemRequestDtoOutgoing = itemRequestService.addItemRequest(1, itemRequestDto);
 
-        assertThat(itemRequestDto.getId(), equalTo(itemRequestDtoOutgoing.getId()));
-        assertThat(itemRequestDto.getDescription(), equalTo(itemRequestDtoOutgoing.getDescription()));
-        assertThat(itemRequestDto.getItems(), equalTo(itemRequestDtoOutgoing.getItems()));
+        assertThat(itemRequestDtoOutgoing.getId(), equalTo(itemRequestDto.getId()));
+        assertThat(itemRequestDtoOutgoing.getDescription(), equalTo(itemRequestDto.getDescription()));
+        assertThat(itemRequestDtoOutgoing.getItems(), equalTo(itemRequestDto.getItems()));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class ItemRequestServiceTest {
                 () -> itemRequestService.addItemRequest(1, itemRequestDto)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -104,10 +103,10 @@ public class ItemRequestServiceTest {
         List<ItemRequestDto> itemRequests = itemRequestService.getItemRequestsByUserId(1);
         ItemRequestDto itemRequestDtoOutgoing = itemRequests.get(0);
 
-        assertThat(1, equalTo(itemRequests.size()));
-        assertThat(itemRequestDto.getId(), equalTo(itemRequestDtoOutgoing.getId()));
-        assertThat(itemRequestDto.getDescription(), equalTo(itemRequestDtoOutgoing.getDescription()));
-        assertThat(itemRequestDto.getItems(), equalTo(itemRequestDtoOutgoing.getItems()));
+        assertThat(itemRequests.size(), equalTo(1));
+        assertThat(itemRequestDtoOutgoing.getId(), equalTo(itemRequestDto.getId()));
+        assertThat(itemRequestDtoOutgoing.getDescription(), equalTo(itemRequestDto.getDescription()));
+        assertThat(itemRequestDtoOutgoing.getItems(), equalTo(itemRequestDto.getItems()));
     }
 
     @Test
@@ -121,11 +120,11 @@ public class ItemRequestServiceTest {
                 () -> itemRequestService.getItemRequestsByUserId(1)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
-    public void getAllItemRequests() {
+    public void shouldGetAllItemRequests() {
         Mockito
                 .when(userStorage.existsById(anyInt()))
                 .thenReturn(true);
@@ -138,13 +137,13 @@ public class ItemRequestServiceTest {
                 .when(itemStorage.findByRequestId(anyInt()))
                 .thenReturn(Collections.emptyList());
 
-        List<ItemRequestDto> items = itemRequestService.getAllItemRequests(1, 0, 5);
-        ItemRequestDto itemRequestDtoOutgoing = items.get(0);
+        List<ItemRequestDto> itemRequests = itemRequestService.getAllItemRequests(1, 0, 5);
+        ItemRequestDto itemRequestDtoOutgoing = itemRequests.get(0);
 
-        assertThat(1, equalTo(items.size()));
-        assertThat(itemRequestDto.getId(), equalTo(itemRequestDtoOutgoing.getId()));
-        assertThat(itemRequestDto.getDescription(), equalTo(itemRequestDtoOutgoing.getDescription()));
-        assertThat(itemRequestDto.getItems(), equalTo(itemRequestDtoOutgoing.getItems()));
+        assertThat(itemRequests.size(), equalTo(1));
+        assertThat(itemRequestDtoOutgoing.getId(), equalTo(itemRequestDto.getId()));
+        assertThat(itemRequestDtoOutgoing.getDescription(), equalTo(itemRequestDto.getDescription()));
+        assertThat(itemRequestDtoOutgoing.getItems(), equalTo(itemRequestDto.getItems()));
     }
 
     @Test
@@ -158,7 +157,7 @@ public class ItemRequestServiceTest {
                 () -> itemRequestService.getAllItemRequests(1, 0, 5)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -177,9 +176,9 @@ public class ItemRequestServiceTest {
 
         ItemRequestDto itemRequestDtoOutgoing = itemRequestService.getItemRequestById(1,1);
 
-        assertThat(itemRequestDto.getId(), equalTo(itemRequestDtoOutgoing.getId()));
-        assertThat(itemRequestDto.getDescription(), equalTo(itemRequestDtoOutgoing.getDescription()));
-        assertThat(itemRequestDto.getItems(), equalTo(itemRequestDtoOutgoing.getItems()));
+        assertThat(itemRequestDtoOutgoing.getId(), equalTo(itemRequestDto.getId()));
+        assertThat(itemRequestDtoOutgoing.getDescription(), equalTo(itemRequestDto.getDescription()));
+        assertThat(itemRequestDtoOutgoing.getItems(), equalTo(itemRequestDto.getItems()));
     }
 
     @Test
@@ -193,7 +192,7 @@ public class ItemRequestServiceTest {
                 () -> itemRequestService.getItemRequestById(1, 1)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -210,6 +209,6 @@ public class ItemRequestServiceTest {
                 () -> itemRequestService.getItemRequestById(1,1)
         );
 
-        assertEquals("Запрос с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Запрос с id=1 не найден"));
     }
 }

@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -49,9 +48,9 @@ public class UserServiceTest {
 
         UserDto userDtoOutgoing = userService.getUserById(1);
 
-        assertThat(user.getId(), equalTo(userDtoOutgoing.getId()));
-        assertThat(user.getName(), equalTo(userDtoOutgoing.getName()));
-        assertThat(user.getEmail(), equalTo(userDtoOutgoing.getEmail()));
+        assertThat(userDtoOutgoing.getId(), equalTo(user.getId()));
+        assertThat(userDtoOutgoing.getName(), equalTo(user.getName()));
+        assertThat(userDtoOutgoing.getEmail(), equalTo(user.getEmail()));
     }
 
     @Test
@@ -65,7 +64,7 @@ public class UserServiceTest {
                 () -> userService.getUserById(1)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -77,10 +76,10 @@ public class UserServiceTest {
         List<UserDto> users = userService.getUsers();
         UserDto userDtoOutgoing = users.get(0);
 
-        assertThat(1, equalTo(users.size()));
-        assertThat(user.getId(), equalTo(userDtoOutgoing.getId()));
-        assertThat(user.getName(), equalTo(userDtoOutgoing.getName()));
-        assertThat(user.getEmail(), equalTo(userDtoOutgoing.getEmail()));
+        assertThat(users.size(), equalTo(1));
+        assertThat(userDtoOutgoing.getId(), equalTo(user.getId()));
+        assertThat(userDtoOutgoing.getName(), equalTo(user.getName()));
+        assertThat(userDtoOutgoing.getEmail(), equalTo(user.getEmail()));
     }
 
     @Test
@@ -91,9 +90,9 @@ public class UserServiceTest {
 
         UserDto userDtoOutgoing = userService.addUser(userToDto(user));
 
-        assertThat(user.getId(), equalTo(userDtoOutgoing.getId()));
-        assertThat(user.getName(), equalTo(userDtoOutgoing.getName()));
-        assertThat(user.getEmail(), equalTo(userDtoOutgoing.getEmail()));
+        assertThat(userDtoOutgoing.getId(), equalTo(user.getId()));
+        assertThat(userDtoOutgoing.getName(), equalTo(user.getName()));
+        assertThat(userDtoOutgoing.getEmail(), equalTo(user.getEmail()));
     }
 
     @Test
@@ -107,7 +106,7 @@ public class UserServiceTest {
                 () -> userService.addUser(userToDto(user))
         );
 
-        assertEquals("Пользователь с email 'user1@email.com' уже существует", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с email 'user1@email.com' уже существует"));
     }
 
     @Test
@@ -121,9 +120,9 @@ public class UserServiceTest {
 
         UserDto userDtoOutgoing = userService.updateUser(userToDto(user));
 
-        assertThat(user.getId(), equalTo(userDtoOutgoing.getId()));
-        assertThat(user.getName(), equalTo(userDtoOutgoing.getName()));
-        assertThat(user.getEmail(), equalTo(userDtoOutgoing.getEmail()));
+        assertThat(userDtoOutgoing.getId(), equalTo(user.getId()));
+        assertThat(userDtoOutgoing.getName(), equalTo(user.getName()));
+        assertThat(userDtoOutgoing.getEmail(), equalTo(user.getEmail()));
     }
 
     @Test
@@ -137,11 +136,11 @@ public class UserServiceTest {
                 () -> userService.updateUser(userToDto(user))
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
-    public void shouldUpdateUserWhenEmailNotUnique() {
+    public void shouldNotUpdateUserWhenEmailNotUnique() {
         Mockito
                 .when(userStorage.findById(anyInt()))
                 .thenReturn(Optional.of(user));
@@ -154,7 +153,7 @@ public class UserServiceTest {
                 () -> userService.updateUser(userToDto(user))
         );
 
-        assertEquals("Пользователь с email 'user1@email.com' уже существует", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с email 'user1@email.com' уже существует"));
     }
 
     @Test

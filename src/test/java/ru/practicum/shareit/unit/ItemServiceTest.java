@@ -36,8 +36,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -114,15 +113,15 @@ public class ItemServiceTest {
 
         ItemDto itemDtoOutgoing = itemService.getItemById(1, 1);
 
-        assertThat(item.getId(), equalTo(itemDtoOutgoing.getId()));
-        assertThat(item.getName(), equalTo(itemDtoOutgoing.getName()));
-        assertThat(item.getDescription(), equalTo(itemDtoOutgoing.getDescription()));
-        assertThat(item.getIsAvailable(), equalTo(itemDtoOutgoing.getIsAvailable()));
-        assertThat(item.getRequest().getId(), equalTo(itemDtoOutgoing.getRequestId()));
-        assertNull(itemDtoOutgoing.getLastBooking());
-        assertThat(booking.getId(), equalTo(itemDtoOutgoing.getNextBooking().getId()));
-        assertThat(1, equalTo(itemDtoOutgoing.getComments().size()));
-        assertThat(comment.getId(), equalTo(itemDtoOutgoing.getComments().get(0).getId()));
+        assertThat(itemDtoOutgoing.getId(), equalTo(item.getId()));
+        assertThat(itemDtoOutgoing.getName(), equalTo(item.getName()));
+        assertThat(itemDtoOutgoing.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemDtoOutgoing.getIsAvailable(), equalTo(item.getIsAvailable()));
+        assertThat(itemDtoOutgoing.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemDtoOutgoing.getLastBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getNextBooking().getId(), equalTo(booking.getId()));
+        assertThat(itemDtoOutgoing.getComments().size(), equalTo(1));
+        assertThat(itemDtoOutgoing.getComments().get(0).getId(), equalTo(comment.getId()));
     }
 
     @Test
@@ -136,7 +135,7 @@ public class ItemServiceTest {
                 () -> itemService.getItemById(1, 1)
         );
 
-        assertEquals("Вещь с id=1 не найдена", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Вещь с id=1 не найдена"));
     }
 
     @Test
@@ -168,16 +167,16 @@ public class ItemServiceTest {
         List<ItemDto> items = itemService.getItemsByUserId(1, 0, 5);
         ItemDto itemDtoOutgoing = items.get(0);
 
-        assertThat(1, equalTo(items.size()));
-        assertThat(item.getId(), equalTo(itemDtoOutgoing.getId()));
-        assertThat(item.getName(), equalTo(itemDtoOutgoing.getName()));
-        assertThat(item.getDescription(), equalTo(itemDtoOutgoing.getDescription()));
-        assertThat(item.getIsAvailable(), equalTo(itemDtoOutgoing.getIsAvailable()));
-        assertThat(item.getRequest().getId(), equalTo(itemDtoOutgoing.getRequestId()));
-        assertNull(itemDtoOutgoing.getLastBooking());
-        assertThat(booking.getId(), equalTo(itemDtoOutgoing.getNextBooking().getId()));
-        assertThat(1, equalTo(itemDtoOutgoing.getComments().size()));
-        assertThat(comment.getId(), equalTo(itemDtoOutgoing.getComments().get(0).getId()));
+        assertThat(items.size(), equalTo(1));
+        assertThat(itemDtoOutgoing.getId(), equalTo(item.getId()));
+        assertThat(itemDtoOutgoing.getName(), equalTo(item.getName()));
+        assertThat(itemDtoOutgoing.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemDtoOutgoing.getIsAvailable(), equalTo(item.getIsAvailable()));
+        assertThat(itemDtoOutgoing.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemDtoOutgoing.getLastBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getNextBooking().getId(), equalTo(booking.getId()));
+        assertThat(itemDtoOutgoing.getComments().size(), equalTo(1));
+        assertThat(itemDtoOutgoing.getComments().get(0).getId(), equalTo(comment.getId()));
     }
 
     @Test
@@ -191,7 +190,7 @@ public class ItemServiceTest {
                 () -> itemService.getItemsByUserId(1, 0, 5)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -208,14 +207,14 @@ public class ItemServiceTest {
 
         ItemDto itemDtoOutgoing = itemService.addItem(1, itemToDto(item, null, null, null));
 
-        assertThat(item.getId(), equalTo(itemDtoOutgoing.getId()));
-        assertThat(item.getName(), equalTo(itemDtoOutgoing.getName()));
-        assertThat(item.getDescription(), equalTo(itemDtoOutgoing.getDescription()));
-        assertThat(item.getIsAvailable(), equalTo(itemDtoOutgoing.getIsAvailable()));
-        assertThat(item.getRequest().getId(), equalTo(itemDtoOutgoing.getRequestId()));
-        assertNull(itemDtoOutgoing.getLastBooking());
-        assertNull(itemDtoOutgoing.getNextBooking());
-        assertNull(itemDtoOutgoing.getComments());
+        assertThat(itemDtoOutgoing.getId(), equalTo(item.getId()));
+        assertThat(itemDtoOutgoing.getName(), equalTo(item.getName()));
+        assertThat(itemDtoOutgoing.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemDtoOutgoing.getIsAvailable(), equalTo(item.getIsAvailable()));
+        assertThat(itemDtoOutgoing.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemDtoOutgoing.getLastBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getNextBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getComments(), nullValue());
     }
 
     @Test
@@ -229,7 +228,7 @@ public class ItemServiceTest {
                 () -> itemService.addItem(1, itemToDto(item, null, null, null))
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -246,7 +245,7 @@ public class ItemServiceTest {
                 () -> itemService.addItem(1, itemToDto(item, null, null, null))
         );
 
-        assertEquals("Запрос с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Запрос с id=1 не найден"));
     }
 
     @Test
@@ -263,14 +262,14 @@ public class ItemServiceTest {
 
         ItemDto itemDtoOutgoing = itemService.updateItem(1, itemToDto(item, null, null, null));
 
-        assertThat(item.getId(), equalTo(itemDtoOutgoing.getId()));
-        assertThat(item.getName(), equalTo(itemDtoOutgoing.getName()));
-        assertThat(item.getDescription(), equalTo(itemDtoOutgoing.getDescription()));
-        assertThat(item.getIsAvailable(), equalTo(itemDtoOutgoing.getIsAvailable()));
-        assertThat(item.getRequest().getId(), equalTo(itemDtoOutgoing.getRequestId()));
-        assertNull(itemDtoOutgoing.getLastBooking());
-        assertNull(itemDtoOutgoing.getNextBooking());
-        assertNull(itemDtoOutgoing.getComments());
+        assertThat(itemDtoOutgoing.getId(), equalTo(item.getId()));
+        assertThat(itemDtoOutgoing.getName(), equalTo(item.getName()));
+        assertThat(itemDtoOutgoing.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemDtoOutgoing.getIsAvailable(), equalTo(item.getIsAvailable()));
+        assertThat(itemDtoOutgoing.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemDtoOutgoing.getLastBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getNextBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getComments(), nullValue());
     }
 
     @Test
@@ -284,7 +283,7 @@ public class ItemServiceTest {
                 () -> itemService.updateItem(1, itemToDto(item, null, null, null))
         );
 
-        assertEquals("Вещь с id=1 не найдена", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Вещь с id=1 не найдена"));
     }
 
     @Test
@@ -297,7 +296,7 @@ public class ItemServiceTest {
                 () -> itemService.updateItem(2, itemToDto(item, null, null, null))
         );
 
-        assertEquals("Пользователь с id=2 не владеет вещью с id=1", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=2 не владеет вещью с id=1"));
     }
 
     @Test
@@ -314,7 +313,7 @@ public class ItemServiceTest {
                 () -> itemService.updateItem(1, itemToDto(item, null, null, null))
         );
 
-        assertEquals("Запрос с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Запрос с id=1 не найден"));
     }
 
     @Test
@@ -339,7 +338,7 @@ public class ItemServiceTest {
                 () -> itemService.deleteItem(1, 1)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -351,15 +350,16 @@ public class ItemServiceTest {
         List<ItemDto> items = itemService.findItems("Test", 0, 5);
         ItemDto itemDtoOutgoing = items.get(0);
 
-        assertThat(item.getId(), equalTo(itemDtoOutgoing.getId()));
-        assertThat(item.getName(), equalTo(itemDtoOutgoing.getName()));
-        assertThat(item.getDescription(), equalTo(itemDtoOutgoing.getDescription()));
-        assertThat(item.getIsAvailable(), equalTo(itemDtoOutgoing.getIsAvailable()));
-        assertThat(item.getRequest().getId(), equalTo(itemDtoOutgoing.getRequestId()));
-        assertNull(itemDtoOutgoing.getLastBooking());
-        assertNull(itemDtoOutgoing.getNextBooking());
-        assertNull(itemDtoOutgoing.getComments());
+        assertThat(itemDtoOutgoing.getId(), equalTo(item.getId()));
+        assertThat(itemDtoOutgoing.getName(), equalTo(item.getName()));
+        assertThat(itemDtoOutgoing.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemDtoOutgoing.getIsAvailable(), equalTo(item.getIsAvailable()));
+        assertThat(itemDtoOutgoing.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemDtoOutgoing.getLastBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getNextBooking(), nullValue());
+        assertThat(itemDtoOutgoing.getComments(), nullValue());
     }
+
     @Test
     public void shouldNotFindItemsWhenBlankText() {
         List<ItemDto> items = itemService.findItems("", 0, 5);
@@ -394,10 +394,10 @@ public class ItemServiceTest {
                 commentToDto(comment, user.getName())
         );
 
-        assertThat(comment.getId(), equalTo(commentDtoOutgoing.getId()));
-        assertThat(comment.getText(), equalTo(commentDtoOutgoing.getText()));
-        assertThat(comment.getAuthor().getName(), equalTo(commentDtoOutgoing.getAuthorName()));
-        assertThat(comment.getCreated(), equalTo(commentDtoOutgoing.getCreated()));
+        assertThat(commentDtoOutgoing.getId(), equalTo(comment.getId()));
+        assertThat(commentDtoOutgoing.getText(), equalTo(comment.getText()));
+        assertThat(commentDtoOutgoing.getAuthorName(), equalTo(comment.getAuthor().getName()));
+        assertThat(commentDtoOutgoing.getCreated(), equalTo(comment.getCreated()));
     }
 
     @Test
@@ -411,7 +411,7 @@ public class ItemServiceTest {
                 () -> itemService.addComment(1, 1, commentToDto(comment, user.getName()))
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -428,7 +428,7 @@ public class ItemServiceTest {
                 () -> itemService.addComment(1, 1, commentToDto(comment, user.getName()))
         );
 
-        assertEquals("Вещь с id=1 не найдена", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Вещь с id=1 не найдена"));
     }
 
     @Test
@@ -454,6 +454,6 @@ public class ItemServiceTest {
                 () -> itemService.addComment(1, 1, commentToDto(comment, user.getName()))
         );
 
-        assertEquals("Бронирование еще не завершилось", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Бронирование еще не завершилось"));
     }
 }

@@ -33,7 +33,6 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -91,12 +90,12 @@ public class BookingServiceTest {
 
         BookingDtoOutgoing bookingDtoOutgoing = bookingService.addBooking(bookingDtoDefault);
 
-        assertThat(bookingDtoDefault.getId(), equalTo(bookingDtoOutgoing.getId()));
-        assertThat(bookingDtoDefault.getStart(), equalTo(bookingDtoOutgoing.getStart()));
-        assertThat(bookingDtoDefault.getEnd(), equalTo(bookingDtoOutgoing.getEnd()));
-        assertThat(bookingDtoDefault.getItemId(), equalTo(bookingDtoOutgoing.getItem().getId()));
-        assertThat(bookingDtoDefault.getBookerId(), equalTo(bookingDtoOutgoing.getBooker().getId()));
-        assertThat(bookingDtoDefault.getStatus(), equalTo(bookingDtoOutgoing.getStatus()));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class BookingServiceTest {
                 () -> bookingService.addBooking(bookingDtoDefault)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -127,7 +126,7 @@ public class BookingServiceTest {
                 () -> bookingService.addBooking(bookingDtoDefault)
         );
 
-        assertEquals("Вещь с id=1 не найдена", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Вещь с id=1 не найдена"));
     }
 
     @Test
@@ -153,7 +152,7 @@ public class BookingServiceTest {
                 () -> bookingService.addBooking(bookingDtoDefault)
         );
 
-        assertEquals("Пользователь не может забронировать свою вещь", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь не может забронировать свою вещь"));
     }
 
     @Test
@@ -179,7 +178,7 @@ public class BookingServiceTest {
                 () -> bookingService.addBooking(bookingDtoDefault)
         );
 
-        assertEquals("Вещь с id=1 не доступна", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Вещь с id=1 не доступна"));
     }
 
     @Test
@@ -204,7 +203,7 @@ public class BookingServiceTest {
                 () -> bookingService.addBooking(bookingDtoDefault)
         );
 
-        assertEquals("Момент окончания бронирования должен быть позже начала", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Момент окончания бронирования должен быть позже начала"));
     }
 
     @Test
@@ -220,12 +219,12 @@ public class BookingServiceTest {
 
         BookingDtoOutgoing bookingDtoOutgoing = bookingService.approveBooking(2, 1, true);
 
-        assertThat(bookingDtoDefault.getId(), equalTo(bookingDtoOutgoing.getId()));
-        assertThat(bookingDtoDefault.getStart(), equalTo(bookingDtoOutgoing.getStart()));
-        assertThat(bookingDtoDefault.getEnd(), equalTo(bookingDtoOutgoing.getEnd()));
-        assertThat(bookingDtoDefault.getItemId(), equalTo(bookingDtoOutgoing.getItem().getId()));
-        assertThat(bookingDtoDefault.getBookerId(), equalTo(bookingDtoOutgoing.getBooker().getId()));
-        assertThat(BookingStatus.APPROVED, equalTo(bookingDtoOutgoing.getStatus()));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(BookingStatus.APPROVED));
     }
 
     @Test
@@ -241,12 +240,12 @@ public class BookingServiceTest {
 
         BookingDtoOutgoing bookingDtoOutgoing = bookingService.approveBooking(2, 1, false);
 
-        assertThat(bookingDtoDefault.getId(), equalTo(bookingDtoOutgoing.getId()));
-        assertThat(bookingDtoDefault.getStart(), equalTo(bookingDtoOutgoing.getStart()));
-        assertThat(bookingDtoDefault.getEnd(), equalTo(bookingDtoOutgoing.getEnd()));
-        assertThat(bookingDtoDefault.getItemId(), equalTo(bookingDtoOutgoing.getItem().getId()));
-        assertThat(bookingDtoDefault.getBookerId(), equalTo(bookingDtoOutgoing.getBooker().getId()));
-        assertThat(BookingStatus.REJECTED, equalTo(bookingDtoOutgoing.getStatus()));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(BookingStatus.REJECTED));
     }
 
     @Test
@@ -260,7 +259,7 @@ public class BookingServiceTest {
                 () -> bookingService.approveBooking(1, 1, true)
         );
 
-        assertEquals("Бронирование с id=1 не найдено", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Бронирование с id=1 не найдено"));
     }
 
     @Test
@@ -284,7 +283,7 @@ public class BookingServiceTest {
                 () -> bookingService.approveBooking(2, 1, true)
         );
 
-        assertEquals("Статус бронирования не является 'WAITING'", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Статус бронирования не является 'WAITING'"));
     }
 
     @Test
@@ -300,12 +299,12 @@ public class BookingServiceTest {
 
         BookingDtoOutgoing bookingDtoOutgoing = bookingService.getById(1, 1);
 
-        assertThat(bookingDtoDefault.getId(), equalTo(bookingDtoOutgoing.getId()));
-        assertThat(bookingDtoDefault.getStart(), equalTo(bookingDtoOutgoing.getStart()));
-        assertThat(bookingDtoDefault.getEnd(), equalTo(bookingDtoOutgoing.getEnd()));
-        assertThat(bookingDtoDefault.getItemId(), equalTo(bookingDtoOutgoing.getItem().getId()));
-        assertThat(bookingDtoDefault.getBookerId(), equalTo(bookingDtoOutgoing.getBooker().getId()));
-        assertThat(bookingDtoDefault.getStatus(), equalTo(bookingDtoOutgoing.getStatus()));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
     }
 
     @Test
@@ -319,7 +318,7 @@ public class BookingServiceTest {
                 () -> bookingService.getById(1, 1)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -336,7 +335,7 @@ public class BookingServiceTest {
                 () -> bookingService.getById(1, 1)
         );
 
-        assertEquals("Бронирование с id=1 не найдено", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Бронирование с id=1 не найдено"));
     }
 
     @Test
@@ -355,7 +354,7 @@ public class BookingServiceTest {
                 () -> bookingService.getById(3, 1)
         );
 
-        assertEquals("У пользователя с id=3 не обнаружено бронирований с id=1", e.getMessage());
+        assertThat(e.getMessage(), equalTo("У пользователя с id=3 не обнаружено бронирований с id=1"));
     }
 
     @Test
@@ -376,13 +375,13 @@ public class BookingServiceTest {
         List<BookingDtoOutgoing> bookings = bookingService.getUserBookings(1, "ALL", 0, 5);
         BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
 
-        assertThat(1, equalTo(bookings.size()));
-        assertThat(bookingDtoDefault.getId(), equalTo(bookingDtoOutgoing.getId()));
-        assertThat(bookingDtoDefault.getStart(), equalTo(bookingDtoOutgoing.getStart()));
-        assertThat(bookingDtoDefault.getEnd(), equalTo(bookingDtoOutgoing.getEnd()));
-        assertThat(bookingDtoDefault.getItemId(), equalTo(bookingDtoOutgoing.getItem().getId()));
-        assertThat(bookingDtoDefault.getBookerId(), equalTo(bookingDtoOutgoing.getBooker().getId()));
-        assertThat(bookingDtoDefault.getStatus(), equalTo(bookingDtoOutgoing.getStatus()));
+        assertThat(bookings.size(), equalTo(1));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
     }
 
     @Test
@@ -392,7 +391,7 @@ public class BookingServiceTest {
                 () -> bookingService.getUserBookings(1, "Test", 0, 5)
         );
 
-        assertEquals("Unknown state: Test", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Unknown state: Test"));
     }
 
     @Test
@@ -406,7 +405,7 @@ public class BookingServiceTest {
                 () -> bookingService.getUserBookings(1, "ALL", 0, 5)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 
     @Test
@@ -427,13 +426,13 @@ public class BookingServiceTest {
         List<BookingDtoOutgoing> bookings = bookingService.getOwnerBookings(2, "ALL", 0, 5);
         BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
 
-        assertThat(1, equalTo(bookings.size()));
-        assertThat(bookingDtoDefault.getId(), equalTo(bookingDtoOutgoing.getId()));
-        assertThat(bookingDtoDefault.getStart(), equalTo(bookingDtoOutgoing.getStart()));
-        assertThat(bookingDtoDefault.getEnd(), equalTo(bookingDtoOutgoing.getEnd()));
-        assertThat(bookingDtoDefault.getItemId(), equalTo(bookingDtoOutgoing.getItem().getId()));
-        assertThat(bookingDtoDefault.getBookerId(), equalTo(bookingDtoOutgoing.getBooker().getId()));
-        assertThat(bookingDtoDefault.getStatus(), equalTo(bookingDtoOutgoing.getStatus()));
+        assertThat(bookings.size(), equalTo(1));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
     }
 
     @Test
@@ -443,7 +442,7 @@ public class BookingServiceTest {
                 () -> bookingService.getOwnerBookings(1, "Test", 0, 5)
         );
 
-        assertEquals("Unknown state: Test", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Unknown state: Test"));
     }
 
     @Test
@@ -457,6 +456,6 @@ public class BookingServiceTest {
                 () -> bookingService.getOwnerBookings(1, "ALL", 0, 5)
         );
 
-        assertEquals("Пользователь с id=1 не найден", e.getMessage());
+        assertThat(e.getMessage(), equalTo("Пользователь с id=1 не найден"));
     }
 }
