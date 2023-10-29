@@ -229,6 +229,7 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.item.id").value(bookingDtoOutgoing.getItem().getId()))
                 .andExpect(jsonPath("$.booker.id").value(bookingDtoOutgoing.getBooker().getId()));
     }
+
     @Test
     public void shouldGetUserBookings() throws Exception {
         Mockito

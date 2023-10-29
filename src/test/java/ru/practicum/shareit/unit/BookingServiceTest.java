@@ -358,7 +358,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void shouldGetUserBookings() {
+    public void shouldGetAllUserBookings() {
         Mockito
                 .when(userStorage.existsById(anyInt()))
                 .thenReturn(true);
@@ -373,6 +373,62 @@ public class BookingServiceTest {
                 ));
 
         List<BookingDtoOutgoing> bookings = bookingService.getUserBookings(1, "ALL", 0, 5);
+        BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
+
+        assertThat(bookings.size(), equalTo(1));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
+    }
+
+    @Test
+    public void shouldGetWaitingUserBookings() {
+        Mockito
+                .when(userStorage.existsById(anyInt()))
+                .thenReturn(true);
+        Mockito
+                .when(
+                        bookingStorage.findByBookerIdAndStatusOrderByStartDesc(
+                                anyInt(),
+                                any(BookingStatus.class),
+                                any(Pageable.class))
+                )
+                .thenReturn(List.of(
+                        bookingFromDto(bookingDtoDefault, user, item)
+                ));
+
+        List<BookingDtoOutgoing> bookings = bookingService.getUserBookings(1, "WAITING", 0, 5);
+        BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
+
+        assertThat(bookings.size(), equalTo(1));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
+    }
+
+    @Test
+    public void shouldGetFutureUserBookings() {
+        Mockito
+                .when(userStorage.existsById(anyInt()))
+                .thenReturn(true);
+        Mockito
+                .when(
+                        bookingStorage.findByBookerIdAndStartAfterOrderByStartDesc(
+                                anyInt(),
+                                any(LocalDateTime.class),
+                                any(Pageable.class))
+                )
+                .thenReturn(List.of(
+                        bookingFromDto(bookingDtoDefault, user, item)
+                ));
+
+        List<BookingDtoOutgoing> bookings = bookingService.getUserBookings(1, "FUTURE", 0, 5);
         BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
 
         assertThat(bookings.size(), equalTo(1));
@@ -409,7 +465,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void shouldGetOwnerBookings() {
+    public void shouldGetAllOwnerBookings() {
         Mockito
                 .when(userStorage.existsById(anyInt()))
                 .thenReturn(true);
@@ -424,6 +480,62 @@ public class BookingServiceTest {
                 ));
 
         List<BookingDtoOutgoing> bookings = bookingService.getOwnerBookings(2, "ALL", 0, 5);
+        BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
+
+        assertThat(bookings.size(), equalTo(1));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
+    }
+
+    @Test
+    public void shouldGetWaitingOwnerBookings() {
+        Mockito
+                .when(userStorage.existsById(anyInt()))
+                .thenReturn(true);
+        Mockito
+                .when(
+                        bookingStorage.findByItemOwnerIdAndStatusOrderByStartDesc(
+                                anyInt(),
+                                any(BookingStatus.class),
+                                any(Pageable.class))
+                )
+                .thenReturn(List.of(
+                        bookingFromDto(bookingDtoDefault, user, item)
+                ));
+
+        List<BookingDtoOutgoing> bookings = bookingService.getOwnerBookings(1, "WAITING", 0, 5);
+        BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
+
+        assertThat(bookings.size(), equalTo(1));
+        assertThat(bookingDtoOutgoing.getId(), equalTo(bookingDtoDefault.getId()));
+        assertThat(bookingDtoOutgoing.getStart(), equalTo(bookingDtoDefault.getStart()));
+        assertThat(bookingDtoOutgoing.getEnd(), equalTo(bookingDtoDefault.getEnd()));
+        assertThat(bookingDtoOutgoing.getItem().getId(), equalTo(bookingDtoDefault.getItemId()));
+        assertThat(bookingDtoOutgoing.getBooker().getId(), equalTo(bookingDtoDefault.getBookerId()));
+        assertThat(bookingDtoOutgoing.getStatus(), equalTo(bookingDtoDefault.getStatus()));
+    }
+
+    @Test
+    public void shouldGetFutureOwnerBookings() {
+        Mockito
+                .when(userStorage.existsById(anyInt()))
+                .thenReturn(true);
+        Mockito
+                .when(
+                        bookingStorage.findByItemOwnerIdAndStartAfterOrderByStartDesc(
+                                anyInt(),
+                                any(LocalDateTime.class),
+                                any(Pageable.class))
+                )
+                .thenReturn(List.of(
+                        bookingFromDto(bookingDtoDefault, user, item)
+                ));
+
+        List<BookingDtoOutgoing> bookings = bookingService.getOwnerBookings(1, "FUTURE", 0, 5);
         BookingDtoOutgoing bookingDtoOutgoing = bookings.get(0);
 
         assertThat(bookings.size(), equalTo(1));
