@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request.model;
+package ru.practicum.shareit.itemrequest.model;
 
 import ru.practicum.shareit.user.model.User;
 

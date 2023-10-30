@@ -221,8 +221,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Pageable getPageable(int from, int size) {
-        if (size < 1) throw new IllegalArgumentException("Количество элементов для отображения не может быть меньше 1");
-        if (from < 0) throw new IllegalArgumentException("Индекс первого элемента не может быть меньше 0");
         int page = from / size;
         return PageRequest.of(page, size);
     }

@@ -12,10 +12,10 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.model.ItemRequestDto;
-import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
-import ru.practicum.shareit.request.storage.ItemRequestStorage;
+import ru.practicum.shareit.itemrequest.model.ItemRequest;
+import ru.practicum.shareit.itemrequest.model.ItemRequestDto;
+import ru.practicum.shareit.itemrequest.service.ItemRequestServiceImpl;
+import ru.practicum.shareit.itemrequest.storage.ItemRequestStorage;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static ru.practicum.shareit.request.model.ItemRequestMapper.itemRequestFromDto;
+import static ru.practicum.shareit.itemrequest.model.ItemRequestMapper.itemRequestFromDto;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemRequestServiceTest {

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 
 @RestControllerAdvice
@@ -22,7 +23,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({ItemUnavailableException.class, BookingEndTimeException.class,
-            BookingStateException.class, BookingStatusException.class, IllegalArgumentException.class})
+            BookingStateException.class, BookingStatusException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(RuntimeException e) {
         log.error(e.getMessage());

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request.service;
+package ru.practicum.shareit.itemrequest.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.model.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequestMapper;
-import ru.practicum.shareit.request.storage.ItemRequestStorage;
+import ru.practicum.shareit.itemrequest.model.ItemRequest;
+import ru.practicum.shareit.itemrequest.model.ItemRequestDto;
+import ru.practicum.shareit.itemrequest.model.ItemRequestMapper;
+import ru.practicum.shareit.itemrequest.storage.ItemRequestStorage;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -19,12 +19,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.request.model.ItemRequestMapper.itemRequestFromDto;
-import static ru.practicum.shareit.request.model.ItemRequestMapper.itemRequestToDto;
+import static ru.practicum.shareit.itemrequest.model.ItemRequestMapper.itemRequestFromDto;
+import static ru.practicum.shareit.itemrequest.model.ItemRequestMapper.itemRequestToDto;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Transactional
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestStorage itemRequestStorage;
     private final UserStorage userStorage;
@@ -56,8 +57,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllItemRequests(int userId, int from, int size) {
         if (!userStorage.existsById(userId))
             throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
-        if (size < 1) throw new IllegalArgumentException("Количество элементов для отображения не может быть меньше 1");
-        if (from < 0) throw new IllegalArgumentException("Индекс первого элемента не может быть меньше 0");
         int page = from / size;
         log.info("Пользователь с id={} запросил запросы других пользователей", userId);
         return itemRequestStorage.findByRequestorIdNotOrderByCreatedDesc(userId, PageRequest.of(page, size)).stream()

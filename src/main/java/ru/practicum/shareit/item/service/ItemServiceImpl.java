@@ -20,8 +20,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.dto.ItemDto;
 import ru.practicum.shareit.item.storage.CommentStorage;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.storage.ItemRequestStorage;
+import ru.practicum.shareit.itemrequest.model.ItemRequest;
+import ru.practicum.shareit.itemrequest.storage.ItemRequestStorage;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -190,8 +190,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Pageable getPageable(int from, int size) {
-        if (size < 1) throw new IllegalArgumentException("Количество элементов для отображения не может быть меньше 1");
-        if (from < 0) throw new IllegalArgumentException("Индекс первого элемента не может быть меньше 0");
         int page = from / size;
         return PageRequest.of(page, size);
     }
