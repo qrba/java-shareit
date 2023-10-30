@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,48 +17,61 @@ import ru.practicum.shareit.item.model.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Validated
 public class ItemController {
     private final ItemService itemService;
 
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
+
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") int userId, @PathVariable int itemId) {
+    public ItemDto getItemById(@RequestHeader(USER_ID_HEADER) int userId, @PathVariable int itemId) {
         return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") int userId) {
-        return itemService.getItemsByUserId(userId);
+    public List<ItemDto> getItemsByUserId(
+            @RequestHeader(USER_ID_HEADER) int userId,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size
+    ) {
+        return itemService.getItemsByUserId(userId, from, size);
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") int userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(USER_ID_HEADER) int userId, @RequestBody @Valid ItemDto itemDto) {
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") int userId,
+    public ItemDto updateItem(@RequestHeader(USER_ID_HEADER) int userId,
                            @PathVariable int itemId, @RequestBody ItemDto itemDto) {
         itemDto.setId(itemId);
         return itemService.updateItem(userId, itemDto);
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") int userId, @PathVariable int itemId) {
+    public void deleteItem(@RequestHeader(USER_ID_HEADER) int userId, @PathVariable int itemId) {
         itemService.deleteItem(userId, itemId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> findItems(@RequestParam String text) {
-        return itemService.findItems(text);
+    public List<ItemDto> findItems(
+            @RequestParam String text,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size
+    ) {
+        return itemService.findItems(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") int userId,
+    public CommentDto addComment(@RequestHeader(USER_ID_HEADER) int userId,
                                  @PathVariable int itemId,
                                  @RequestBody @Valid CommentDto commentDto) {
         return itemService.addComment(userId, itemId, commentDto);

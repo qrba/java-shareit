@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -98,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDtoOutgoing> getUserBookings(int userId, String stateString) {
+    public List<BookingDtoOutgoing> getUserBookings(int userId, String stateString, int from, int size) {
         BookingState state;
         try {
             state = BookingState.valueOf(stateString);
@@ -112,23 +114,44 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case FUTURE:
-                bookings = bookingStorage.findByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = bookingStorage.findByBookerIdAndStartAfterOrderByStartDesc(
+                        userId,
+                        LocalDateTime.now(),
+                        getPageable(from, size)
+                );
                 break;
             case CURRENT:
                 LocalDateTime now = LocalDateTime.now();
-                bookings = bookingStorage.findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now);
+                bookings = bookingStorage.findByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                        userId,
+                        now,
+                        now,
+                        getPageable(from, size)
+                );
                 break;
             case PAST:
-                bookings = bookingStorage.findByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = bookingStorage.findByBookerIdAndEndBeforeOrderByStartDesc(
+                        userId,
+                        LocalDateTime.now(),
+                        getPageable(from, size)
+                );
                 break;
             case WAITING:
-                bookings = bookingStorage.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+                bookings = bookingStorage.findByBookerIdAndStatusOrderByStartDesc(
+                        userId,
+                        BookingStatus.WAITING,
+                        getPageable(from, size)
+                );
                 break;
             case REJECTED:
-                bookings = bookingStorage.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+                bookings = bookingStorage.findByBookerIdAndStatusOrderByStartDesc(
+                        userId,
+                        BookingStatus.REJECTED,
+                        getPageable(from, size)
+                );
                 break;
             default:
-                bookings = bookingStorage.findByBookerIdOrderByStartDesc(userId);
+                bookings = bookingStorage.findByBookerIdOrderByStartDesc(userId, getPageable(from, size));
         }
 
         return bookings.stream()
@@ -138,7 +161,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDtoOutgoing> getOwnerBookings(int userId, String stateString) {
+    public List<BookingDtoOutgoing> getOwnerBookings(int userId, String stateString, int from, int size) {
         BookingState state;
         try {
             state = BookingState.valueOf(stateString);
@@ -152,27 +175,53 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case FUTURE:
-                bookings = bookingStorage.findByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = bookingStorage.findByItemOwnerIdAndStartAfterOrderByStartDesc(
+                        userId,
+                        LocalDateTime.now(),
+                        getPageable(from, size)
+                );
                 break;
             case CURRENT:
                 LocalDateTime now = LocalDateTime.now();
-                bookings = bookingStorage.findByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, now, now);
+                bookings = bookingStorage.findByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                        userId,
+                        now,
+                        now,
+                        getPageable(from, size)
+                );
                 break;
             case PAST:
-                bookings = bookingStorage.findByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = bookingStorage.findByItemOwnerIdAndEndBeforeOrderByStartDesc(
+                        userId,
+                        LocalDateTime.now(),
+                        getPageable(from, size)
+                );
                 break;
             case WAITING:
-                bookings = bookingStorage.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+                bookings = bookingStorage.findByItemOwnerIdAndStatusOrderByStartDesc(
+                        userId,
+                        BookingStatus.WAITING,
+                        getPageable(from, size)
+                );
                 break;
             case REJECTED:
-                bookings = bookingStorage.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+                bookings = bookingStorage.findByItemOwnerIdAndStatusOrderByStartDesc(
+                        userId,
+                        BookingStatus.REJECTED,
+                        getPageable(from, size)
+                );
                 break;
             default:
-                bookings = bookingStorage.findByItemOwnerIdOrderByStartDesc(userId);
+                bookings = bookingStorage.findByItemOwnerIdOrderByStartDesc(userId, getPageable(from, size));
         }
 
         return bookings.stream()
                 .map(BookingMapper::bookingToDtoOutgoing)
                 .collect(Collectors.toList());
+    }
+
+    private Pageable getPageable(int from, int size) {
+        int page = from / size;
+        return PageRequest.of(page, size);
     }
 }
