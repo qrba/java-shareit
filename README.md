@@ -6,4 +6,4 @@ ShareIt - это сервис для шеринга вещей, позволяю
 В этом репозитории представлена backend-часть сервиса.
 
 ## Схема базы данных сервиса
-<img src="src/main/resources/ER_diagram.png" alt="er_diagram" width="700">
+<img src="ER_diagram.png" alt="er_diagram" width="700">
