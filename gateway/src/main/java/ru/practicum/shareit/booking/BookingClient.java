@@ -58,7 +58,7 @@ public class BookingClient extends BaseClient {
         try {
             BookingState.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new BookingStateException("Некорректный параметр state: " + state);
+            throw new BookingStateException("Unknown state: " + state);
         }
         log.info("Запрос на просмотр своих бронирований от пользователя с id={}", userId);
         Map<String, Object> parameters = Map.of(
@@ -73,7 +73,7 @@ public class BookingClient extends BaseClient {
         try {
             BookingState.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new BookingStateException("Некорректный параметр state: " + state);
+            throw new BookingStateException("Unknown state: " + state);
         }
         log.info("Запрос на просмотр бронирований своих вещей от пользователя с id={}", userId);
         Map<String, Object> parameters = Map.of(
