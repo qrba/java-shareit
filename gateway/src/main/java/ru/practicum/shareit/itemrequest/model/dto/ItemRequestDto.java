@@ -1,7 +1,7 @@
-package ru.practicum.shareit.itemrequest.model;
+package ru.practicum.shareit.itemrequest.model.dto;
 
 import lombok.Data;
-import ru.practicum.shareit.item.model.ItemDto;
+import ru.practicum.shareit.item.model.dto.ItemDto;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;

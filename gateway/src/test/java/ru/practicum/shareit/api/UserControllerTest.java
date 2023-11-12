@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.UserClient;
 import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.model.UserDto;
+import ru.practicum.shareit.user.model.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
 

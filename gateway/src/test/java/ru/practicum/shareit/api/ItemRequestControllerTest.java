@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.itemrequest.ItemRequestClient;
 import ru.practicum.shareit.itemrequest.ItemRequestController;
-import ru.practicum.shareit.itemrequest.model.ItemRequestDto;
+import ru.practicum.shareit.itemrequest.model.dto.ItemRequestDto;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
